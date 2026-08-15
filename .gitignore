@@ -1,0 +1,20 @@
+target/
+*.class
+
+# H2 embedded database files created on first run
+data/
+*.db
+*.mv.db
+*.trace.db
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# OS
+.DS_Store
