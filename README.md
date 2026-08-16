@@ -247,3 +247,9 @@ use MySQL/PostgreSQL with a connection pool.
 - `AUTO_SERVER=TRUE` allows a second local process to connect to the same H2
   file concurrently for convenience during development; it is not a
   substitute for a real multi-client database server under load.
+
+---
+
+## License
+
+MIT.
