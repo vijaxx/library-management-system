@@ -89,11 +89,18 @@ public class MemberDao {
         }
     }
 
-    /** Case-insensitive substring match across name, email and phone. */
+    /**
+     * Case-insensitive substring match across name, email and phone.
+     *
+     * <p>{@code term} is matched literally -- a search for {@code "_"} or
+     * {@code "%"} looks for that literal character rather than acting as a
+     * wildcard. See {@link LikePatterns}.
+     */
     public List<Member> search(Connection c, String term) throws SQLException {
-        String pattern = "%" + (term == null ? "" : term.toLowerCase()) + "%";
+        String pattern = LikePatterns.substringMatch(term == null ? null : term.toLowerCase());
         String sql = "SELECT " + COLUMNS + " FROM members WHERE "
-                + "LOWER(name) LIKE ? OR LOWER(email) LIKE ? OR LOWER(COALESCE(phone, '')) LIKE ? "
+                + "LOWER(name) LIKE ? ESCAPE '\\' OR LOWER(email) LIKE ? ESCAPE '\\' "
+                + "OR LOWER(COALESCE(phone, '')) LIKE ? ESCAPE '\\' "
                 + "ORDER BY name";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             for (int i = 1; i <= 3; i++) {

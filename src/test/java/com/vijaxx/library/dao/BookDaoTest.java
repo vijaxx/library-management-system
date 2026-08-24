@@ -145,4 +145,24 @@ class BookDaoTest {
             assertEquals(1, dao.findAll(c).size());
         }
     }
+
+    @Test
+    void searchTreatsPercentAndUnderscoreAsLiteralCharactersNotWildcards() throws Exception {
+        try (Connection c = db.open()) {
+            dao.insert(c, Book.of("999-A", "Has_Underscore", "Author One", "Cat", 1));
+            dao.insert(c, Book.of("999-B", "HasXUnderscore", "Author Two", "Cat", 1));
+
+            // Before the LIKE-escaping fix, "_" matched any single character, so
+            // this search would have returned both books instead of just the one
+            // whose title genuinely contains an underscore.
+            List<Book> underscoreSearch = dao.search(c, "has_underscore");
+            assertEquals(1, underscoreSearch.size());
+            assertEquals("Has_Underscore", underscoreSearch.get(0).getTitle());
+
+            dao.insert(c, Book.of("999-C", "50% Off Classics", "Author Three", "Cat", 1));
+            List<Book> percentSearch = dao.search(c, "50%");
+            assertEquals(1, percentSearch.size());
+            assertEquals("50% Off Classics", percentSearch.get(0).getTitle());
+        }
+    }
 }

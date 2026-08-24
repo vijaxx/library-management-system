@@ -96,13 +96,14 @@ public class BookDao {
     /**
      * Case-insensitive substring match across title, author, ISBN and category.
      * The search term is bound as a parameter, so quotes and SQL keywords in it
-     * are inert data.
+     * are inert data. It is also matched literally rather than as a wildcard --
+     * see {@link LikePatterns}.
      */
     public List<Book> search(Connection c, String term) throws SQLException {
-        String pattern = "%" + (term == null ? "" : term.toLowerCase()) + "%";
+        String pattern = LikePatterns.substringMatch(term == null ? null : term.toLowerCase());
         String sql = "SELECT " + COLUMNS + " FROM books WHERE "
-                + "LOWER(title) LIKE ? OR LOWER(author) LIKE ? "
-                + "OR LOWER(isbn) LIKE ? OR LOWER(category) LIKE ? ORDER BY title";
+                + "LOWER(title) LIKE ? ESCAPE '\\' OR LOWER(author) LIKE ? ESCAPE '\\' "
+                + "OR LOWER(isbn) LIKE ? ESCAPE '\\' OR LOWER(category) LIKE ? ESCAPE '\\' ORDER BY title";
         try (PreparedStatement ps = c.prepareStatement(sql)) {
             for (int i = 1; i <= 4; i++) {
                 ps.setString(i, pattern);
