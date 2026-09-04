@@ -199,7 +199,7 @@ use MySQL/PostgreSQL with a connection pool.
 
 ## What was verified, and how
 
-- **`mvn clean test` passes**: 44 tests, 0 failures, 0 errors (see below for
+- **`mvn clean test` passes**: 45 tests, 0 failures, 0 errors (see below for
   the breakdown). This is a real run of the build, not a claim.
 - **The app compiles**: `mvn clean compile` and `mvn clean package` both
   succeed and produce a runnable shaded jar
@@ -224,12 +224,12 @@ use MySQL/PostgreSQL with a connection pool.
   only to show the database bootstrap step (which runs *before* any Swing
   code) completes cleanly even without a display.
 
-### Test breakdown (44 tests, `mvn clean test`)
+### Test breakdown (45 tests, `mvn clean test`)
 
 | Class | Tests | Covers |
 |---|---:|---|
 | `FinePolicyTest` | 7 | Fine boundaries: on-time, early, 1 day late, many days late, zero-days-negative clamp, rate validation |
-| `BookDaoTest` | 8 | CRUD, ISBN lookup, guarded copy-count updates (can't go negative or over total), search, **SQL-injection resistance** |
+| `BookDaoTest` | 9 | CRUD, ISBN lookup, guarded copy-count updates (can't go negative or over total), search, **SQL-injection resistance**, **LIKE wildcard (`%`/`_`) escaping** |
 | `MemberDaoTest` | 5 | CRUD, case-insensitive email/search lookups |
 | `LibraryServiceBorrowingTest` | 9 | Copy decrement on issue, no-copies-available rejection, **borrow-limit enforcement per tier**, duplicate-title rejection, inactive-member rejection, not-found handling |
 | `LibraryServiceReturnTest` | 7 | Fine-free on-time/early return, 1-day and many-day fines, copy restoration, double-return rejection, return-by-book-and-member |
